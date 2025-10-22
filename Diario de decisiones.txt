@@ -1,0 +1,25 @@
+Dia 1
+
+Iré escribiendo en este fichero de texto a modo de diario para que se entiendan cuáles han sido mis procesos mentales a la hora de ir tomando decisiones y desarrollando código para el proyecto encargado.
+
+El objetivo es crear un gestor de dispositivos IoT y un mockup de los propios dispositivos. El gestor ha de ser capaz de persistir las métricas creadas por los dispositivos y tambien gestionar algunos parametros de estos.
+
+Para el gestor se me ocurre implementar un monolito por capas que gestione una conexion a una base de datos de MongoDB. Lo mas sencillo posible pues esto es una prueba de concepto y realmente no hay mucha mas gestion.
+Para la simulacion de los dispositivos se me ocurren dos posibles soluciones: Lanzar go rutinas con configuracion previa desde el monolito o dockerizar el mockup de los dispositivos y lanzarlo a un cluster de kubernetes desde el monolito, este le otorgaria toda la configuracion necesaria a cada dispositivo a través de sus variables de entorno.
+
+Por el momento voy a avanzar con el monolito que es lo mas sencillo.
+Comenzaré definiendo tres niveles:
+- "handler" para exponer el servicio, voy a exponer una sencilla REST API por HTTP
+- "usecase" para la lógica de negocio
+- "repository" para el nivel de persistencia de datos
+
+Adicionalmente he creado un repositorio llamado "adapter". Aquí tendré las implementaciones para los clientes de MongoDB y NATS. Esto me permitirá en un futuro definir interfaces dentro de mi monolito que puedan abstraer las implementaciones de la tecnologia utilizadas en el paquete auxiliar de "adapter".
+
+Comenzando con el handler, este gestionará un servicio de gin. Quien ha de crear las dependecias usadas por todas las capas es el fichero "main.go" localizado en la raiz del proyecto.
+
+Voy a definir primero una unica ruta GET para recibir todos los datos de un dispositivo dado su ID. Comenzaré definiendo el handler y de ahí trabajaré hacia abajo.
+
+Para el nivel de usecase, voy a crear un fichero dentro para cada recurso que haya de ser gestionado. Por el momento solo tenemos "devices".
+Lo mismo es dicho para el nivel de repository.
+
+Ahora voy a definir lo más básico para la coleccion de adaptadores. Sinceramente haría la implementacion de la lógica de los clientes directamente sobre el nivel de repositorio pero en la descripcion del proyecto se piden tests para la plataforma y voy a necesitar "mockear" los clientes de las tecnologias externas si es el caso.
