@@ -1,18 +1,17 @@
 // Package handler exposes an HTTP REST API for managing IoT devices.
 package handler
 
-import (
-	"net/http"
+import "github.com/alexrodfe/iot-poc/iot-manager/adapter/clients"
 
-	"github.com/gin-gonic/gin"
-)
-
-// RegisterRoutes registers the HTTP routes for the IoT manager.
-func RegisterRoutes(router *gin.Engine) {
-	router.GET("/devices/:id", getDeviceEntriesByID)
+type Handler struct {
+	natsManager clients.NatsClient
 }
 
-func getDeviceEntriesByID(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"id": id})
+func New(natsManager clients.NatsClient) *Handler {
+	return &Handler{natsManager: natsManager}
+}
+
+func (h *Handler) StartService() error {
+
+	return nil
 }

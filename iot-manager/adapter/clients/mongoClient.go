@@ -5,5 +5,5 @@ type MongoClient interface {
 	Connect() error
 	Close() error
 
-	GetDeviceEntriesByID(id string) (string, error)
+	GetDeviceEntriesByDeviceID(id string) (string, error)
 }

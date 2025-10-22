@@ -7,6 +7,8 @@ El objetivo es crear un gestor de dispositivos IoT y un mockup de los propios di
 Para el gestor se me ocurre implementar un monolito por capas que gestione una conexion a una base de datos de MongoDB. Lo mas sencillo posible pues esto es una prueba de concepto y realmente no hay mucha mas gestion.
 Para la simulacion de los dispositivos se me ocurren dos posibles soluciones: Lanzar go rutinas con configuracion previa desde el monolito o dockerizar el mockup de los dispositivos y lanzarlo a un cluster de kubernetes desde el monolito, este le otorgaria toda la configuracion necesaria a cada dispositivo a través de sus variables de entorno.
 
+He elegido mongoDB pues los datos no guardan relacion alguna entre ellos, han de ser guardados en masa y rápido y además es posible que muten con el tiempo si nuevos atributos son añadidos.
+
 Por el momento voy a avanzar con el monolito que es lo mas sencillo.
 Comenzaré definiendo tres niveles:
 - "handler" para exponer el servicio, voy a exponer una sencilla REST API por HTTP
@@ -23,3 +25,24 @@ Para el nivel de usecase, voy a crear un fichero dentro para cada recurso que ha
 Lo mismo es dicho para el nivel de repository.
 
 Ahora voy a definir lo más básico para la coleccion de adaptadores. Sinceramente haría la implementacion de la lógica de los clientes directamente sobre el nivel de repositorio pero en la descripcion del proyecto se piden tests para la plataforma y voy a necesitar "mockear" los clientes de las tecnologias externas si es el caso.
+
+*Subida la verion v0.1 del proyecto*
+
+No me termina de convencer esta solucion para el repositorio, seguramente segun escale surja algun problema y lo vuelva a repensar.
+
+Ahora mismo falta una cosa, ¿Qué infomacion vamos a replicar y guardar?
+Según la especificación el dispositivo reporta varias metricas a la vez. Así pues voy a definir un paquete "commons" para que sea compartido entre el monolito y los dispositivos iot.
+En un escenario real este paquete "commons" yo lo publicaría como una libreria pública a parte.
+
+No me termina de convencer que el monolito base todo su flujo sobre un tipo de datos externo, pero menos me gusta la idea de hacer pública la declaración del tipo desde el monolito.
+Como este escenario es un poc, por el momento voy a dejar esto como una carpeta al mismo nivel que el repositorio.
+
+La declaracion del tipo va a ser de ejemplo, pondré las tres métricas mencionadas en la descripción del proyecto. Más un ID único para la métrica y un "DeviceID" que indica qué dispositivo lo creó y un atributo "timestamp" para saber cuándo se generó.
+Es muy posible que reaproveche este nivel lógico para definir la configuración de los dispositivos en un futuro próximo.
+
+Acabo de caer en la cuenta de que para este proyecto se espera que todas las comunicaciones se hagan mediante NATS, tanto el publicar como consultar metricas e incluso publicar configuracion en los sensores.
+Asi que voy a cambiar la tecnologia REST API por HTTP en el nivel del handler y voy a poner un cliente de NATS que capture mensajes de un stream y de ahi los interprete a acciones.
+Haré que la configuracion a usar venga dada por variables de entorno, el main cargará esta informacion en el handler y este levantará el cliente de nats.
+
+El main levantará el handler, este se subscribirá a un canal de control en nats y según reciba mensajes, estos tendrán acciones a desempeñar, el handler hará dispatch al usecase que toque en funcion de la acción que se haya pedido.
+Voy a aprovechar el paquete commons para definir una serie de mensajes que puedan ser enviados desde este canal de control.
