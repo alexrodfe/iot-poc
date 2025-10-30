@@ -3,15 +3,15 @@ package handler
 
 import "github.com/alexrodfe/iot-poc/iot-manager/adapter/clients"
 
-type Handler struct {
+type NatsHandler struct {
 	natsManager clients.NatsClient
 }
 
-func New(natsManager clients.NatsClient) *Handler {
-	return &Handler{natsManager: natsManager}
+func New(natsManager clients.NatsClient) *NatsHandler {
+	return &NatsHandler{natsManager: natsManager}
 }
 
-func (h *Handler) StartService() error {
+func (h *NatsHandler) StartService() error {
 
 	return nil
 }

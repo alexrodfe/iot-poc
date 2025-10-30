@@ -46,3 +46,21 @@ Haré que la configuracion a usar venga dada por variables de entorno, el main c
 
 El main levantará el handler, este se subscribirá a un canal de control en nats y según reciba mensajes, estos tendrán acciones a desempeñar, el handler hará dispatch al usecase que toque en funcion de la acción que se haya pedido.
 Voy a aprovechar el paquete commons para definir una serie de mensajes que puedan ser enviados desde este canal de control.
+
+*Subida la verion v0.2 del proyecto*
+
+Voy a crear un fichero .ENV en el que guardaré configuración relevante que usará la plataforma. Voy a empezar por el nombre del canal de NATS que va a atendender el monolito para recibir peticiones.
+Para esto tambien voy a crear un paquete de configuracion que va a declarar y mantener una estructura "config" que va a ser propagada y utilizada por la plataforma.
+
+----
+Me acabo de dar cuenta de que he cometido un error garrafal leyendo el enunciado del ejercicio y he de replantear varios conceptos de base.
+Pensé que había de programar un gestor de dispositivos que cada uno gestionaba varios sensores. Me di cuenta cuando al pensar el servicio de nats algunas cosas no me encajaban.
+
+Voy a hacer una version hasta donde he llegado y cambiar de base algunas cosas.
+
+Voy a comenzar haciendo el código que simule un sensor. Lo voy a hacer desde el código de iot-manager. Voy a mantener la estructura actual porque el dispositivo ha de aceptar dos peticiones del exterior - cambio de configuracion y cambio en una metrica.
+Tengo pensado que el dispositivo vaya subiendo metricas a un tópico de jetstream y este podrá ser consumido desde el exterior. Luego habrá de quedarse escuchando a un tópico de nats y gestionar las peticiones que correspondan.
+
+Pensandolo mejor, más allá de mantener una arquitectura por capas, creo voy a definir una estructura principal "device" y dentro de esta estructura tendré diferentes clientes para la tecnologia que quiera usar. Empezaré por la conexión de NATS.
+
+

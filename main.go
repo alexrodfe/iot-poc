@@ -4,18 +4,21 @@ import (
 	"log"
 
 	"github.com/alexrodfe/iot-poc/iot-manager/adapter/implementations"
+	"github.com/alexrodfe/iot-poc/iot-manager/config"
 	"github.com/alexrodfe/iot-poc/iot-manager/handler"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	// TODO: load nats url through viper from config file or env variable
-	js, err := implementations.InitJetStreamConnection(viper.GetString("nats url goes here"))
+	cfg, err := config.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	natsClient := implementations.NewNatsManager(js)
+	natsClient, err := implementations.NewNatsManager(cfg.Nats)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	handler := handler.New(natsClient)
 
 	handler.StartService()

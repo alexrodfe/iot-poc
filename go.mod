@@ -3,6 +3,7 @@ module github.com/alexrodfe/iot-poc
 go 1.24.5
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.47.0
 	github.com/spf13/viper v1.21.0
 )
