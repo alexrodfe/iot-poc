@@ -1,0 +1,48 @@
+// package main will load up all dependencies and run the IoT sensor
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/alexrodfe/iot-poc/iot-sensor/clients"
+	"github.com/alexrodfe/iot-poc/iot-sensor/config"
+	sensPck "github.com/alexrodfe/iot-poc/iot-sensor/sensor"
+	//
+	// NOTE: Adjust imports to match actual package paths / exported symbols.
+	//
+)
+
+func main() {
+	// Build dependencies
+	cfg, err := config.New()
+	if err != nil {
+		panic(err)
+	}
+
+	nc, err := clients.NewNatsClient(cfg.Nats)
+	if err != nil {
+		panic(err)
+	}
+
+	sensor := sensPck.New(cfg.SensorID, nc)
+
+	// Prepare context that cancels on SIGTERM / SIGINT
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	signals := make(chan os.Signal, 2)
+	signal.Notify(signals, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		<-signals
+		cancel()
+	}()
+
+	if err := sensor.Run(ctx); err != nil {
+		log.Fatalf("Fatal error: %v", err)
+	}
+}

@@ -61,6 +61,13 @@ Voy a hacer una version hasta donde he llegado y cambiar de base algunas cosas.
 Voy a comenzar haciendo el código que simule un sensor. Lo voy a hacer desde el código de iot-manager. Voy a mantener la estructura actual porque el dispositivo ha de aceptar dos peticiones del exterior - cambio de configuracion y cambio en una metrica.
 Tengo pensado que el dispositivo vaya subiendo metricas a un tópico de jetstream y este podrá ser consumido desde el exterior. Luego habrá de quedarse escuchando a un tópico de nats y gestionar las peticiones que correspondan.
 
-Pensandolo mejor, más allá de mantener una arquitectura por capas, creo voy a definir una estructura principal "device" y dentro de esta estructura tendré diferentes clientes para la tecnologia que quiera usar. Empezaré por la conexión de NATS.
+Pensandolo mejor, más allá de mantener una arquitectura por capas, creo voy a definir una estructura principal "sensor" y dentro de esta estructura tendré diferentes clientes para la tecnologia que quiera usar. Empezaré por la conexión de NATS.
 
+Vale, ya tengo definido dentro de la carpeta iot-sensor la funcionalidad basica del sensor. He decidido dividirlo en 4 partes:
+- Paquete sensor declara el componente del sensor y sus métodos implementados
+- Paquete config que tendrá toda la configuracion necesaria para levantar el sensor, voy a suponer que le viene dada por variables ENV durante despliegue
+- Paquete de clientes que cuenta con una implementacion de las tecnlogias que usa el sensor
+- Paquete main que levantará las dependencias necesarias y ejecutará el sensor
+
+*Subida la version v0.4 del proyecto*
 
