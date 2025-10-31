@@ -2,14 +2,19 @@
 package clients
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/alexrodfe/iot-poc/commons"
 	"github.com/alexrodfe/iot-poc/iot-sensor/config"
 	"github.com/nats-io/nats.go"
 )
 
+type HandleCommandFunc func(command commons.SensorCommand) error
+
 type Nats interface {
 	PostMeasurement(data []byte) error
+	StartHandler(handleCommand HandleCommandFunc) error
 }
 
 var _ Nats = (*natsClient)(nil)
@@ -54,7 +59,7 @@ func createSensorStream(js nats.JetStreamContext, cfg config.NatsConfig) error {
 	// Create the sensor stream
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:     cfg.SensorStream,
-		Subjects: []string{"sensor.>"},
+		Subjects: []string{cfg.SensorSubject},
 	})
 	if err != nil {
 		return fmt.Errorf("error creating sensor stream: %w", err)
@@ -73,7 +78,7 @@ func createMeasurementsStream(js nats.JetStreamContext, cfg config.NatsConfig) e
 	// Create the measurements stream
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:     cfg.MeasurementsStream,
-		Subjects: []string{"measurements.>"},
+		Subjects: []string{cfg.MeasurementsSubject},
 	})
 	if err != nil {
 		return fmt.Errorf("error creating measurements stream: %w", err)
@@ -87,5 +92,23 @@ func (n *natsClient) PostMeasurement(data []byte) error {
 	if err != nil {
 		return fmt.Errorf("error publishing measurement to NATS: %w", err)
 	}
+	return nil
+}
+
+func (n *natsClient) StartHandler(handleCommand HandleCommandFunc) error {
+	_, err := n.js.Subscribe(n.cfg.SensorSubject, func(m *nats.Msg) {
+		var command commons.SensorCommand
+		if err := json.Unmarshal(m.Data, &command); err != nil {
+			return
+		}
+		if err := handleCommand(command); err != nil {
+			return
+		}
+	})
+
+	if err != nil {
+		return fmt.Errorf("error subscribing to sensor stream: %w", err)
+	}
+
 	return nil
 }

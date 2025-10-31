@@ -2,9 +2,7 @@
 package sensor
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
@@ -20,13 +18,19 @@ type Sensor struct {
 	natsConfig   config.NatsConfig
 
 	natsClient clients.Nats
+
+	generatedMetrics map[uint64]commons.Measurement
 }
 
-func New(id uint64, natsClient clients.Nats) *Sensor {
+func New(cfg *config.Config, natsClient clients.Nats) *Sensor {
+	generatedMetrics := make(map[uint64]commons.Measurement)
+
 	return &Sensor{
-		ID:           id,
-		sensorConfig: newSensorConfig(),
-		natsClient:   natsClient,
+		ID:               cfg.SensorID,
+		natsConfig:       cfg.Nats,
+		sensorConfig:     newSensorConfig(),
+		natsClient:       natsClient,
+		generatedMetrics: generatedMetrics,
 	}
 }
 
@@ -39,33 +43,7 @@ func (s *Sensor) generateFakeMeasurement() commons.Measurement {
 }
 
 func (s *Sensor) postMeasurement(measurement commons.Measurement) error {
+	s.generatedMetrics[measurement.LectureID] = measurement
+
 	return s.natsClient.PostMeasurement(commons.MeasurementToBytes(measurement))
-}
-
-// Run starts the publishing loop.
-func (s *Sensor) Run(ctx context.Context) error {
-	ticker := time.NewTicker(s.GetInterval())
-	defer ticker.Stop()
-
-	log.Printf("🚀 Sensor started. ")
-
-	for {
-		currentInterval := s.GetInterval()
-
-		select {
-		case <-ctx.Done():
-			log.Println("🛑 Shutdown signal received, stopping sensor loop.")
-			return nil
-		case <-time.After(currentInterval):
-			m := s.generateFakeMeasurement()
-
-			err := s.postMeasurement(m)
-			if err != nil {
-				log.Println("⚠️ Failed to post measurement, skipping.")
-				continue
-			}
-
-			log.Printf("✅ Published measurement id=%d sensor=%d", m.LectureID, m.SensorID)
-		}
-	}
 }

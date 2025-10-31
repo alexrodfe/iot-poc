@@ -12,9 +12,11 @@ type Config struct {
 }
 
 type NatsConfig struct {
-	URL                string `mapstructure:"url"`
-	SensorStream       string `mapstructure:"sensor_stream"`
-	MeasurementsStream string `mapstructure:"measurements_stream"`
+	URL                 string `mapstructure:"url"`
+	SensorStream        string `mapstructure:"sensor_stream"`
+	SensorSubject       string `mapstructure:"sensor_subject"`
+	MeasurementsStream  string `mapstructure:"measurements_stream"`
+	MeasurementsSubject string `mapstructure:"measurements_subject"`
 }
 
 func New() (*Config, error) {
@@ -38,7 +40,9 @@ func New() (*Config, error) {
 	// NATS config
 	_ = v.BindEnv("nats.url", "NATS_URL")
 	_ = v.BindEnv("nats.sensor_stream", "NATS_SENSOR_STREAM")
+	_ = v.BindEnv("nats.sensor_subject", "NATS_SENSOR_SUBJECT")
 	_ = v.BindEnv("nats.measurements_stream", "NATS_MEASUREMENTS_STREAM")
+	_ = v.BindEnv("nats.measurements_subject", "NATS_MEASUREMENTS_SUBJECT")
 
 	cfg := Config{}
 	if err := v.Unmarshal(&cfg); err != nil {

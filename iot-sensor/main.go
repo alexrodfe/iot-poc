@@ -11,9 +11,6 @@ import (
 	"github.com/alexrodfe/iot-poc/iot-sensor/clients"
 	"github.com/alexrodfe/iot-poc/iot-sensor/config"
 	sensPck "github.com/alexrodfe/iot-poc/iot-sensor/sensor"
-	//
-	// NOTE: Adjust imports to match actual package paths / exported symbols.
-	//
 )
 
 func main() {
@@ -28,7 +25,7 @@ func main() {
 		panic(err)
 	}
 
-	sensor := sensPck.New(cfg.SensorID, nc)
+	sensor := sensPck.New(cfg, nc)
 
 	// Prepare context that cancels on SIGTERM / SIGINT
 	ctx, cancel := context.WithCancel(context.Background())
@@ -41,6 +38,10 @@ func main() {
 		<-signals
 		cancel()
 	}()
+
+	if err := sensor.StartHandler(); err != nil {
+		log.Fatalf("Fatal error starting sensor handler: %v", err)
+	}
 
 	if err := sensor.Run(ctx); err != nil {
 		log.Fatalf("Fatal error: %v", err)

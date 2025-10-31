@@ -71,3 +71,15 @@ Vale, ya tengo definido dentro de la carpeta iot-sensor la funcionalidad basica 
 
 *Subida la version v0.4 del proyecto*
 
+Con esto queda programada la funcionalidad básica de subir métricas del sensor, quedaría hacer la configuración del stream de nats para lidiar con problemas de memoria, pero como mockup está bien así.
+
+Ahora voy a continuar haciendo que el sensor atienda un tópico por el cual le lleguen ordendes de actualizar configuracion o de editar métricas.
+Bueno para editar métricas primero deberia pensar en cómo se van a almacenar.
+
+Las métricas las voy a almacenar en memoria dentro de un mapa, por el momento me permitirá mantenerlo simple y avanzar.
+
+Con esto el handler queda terminado. El cliente de nats se encarga de subscribirse al tópico y deja como handler para el mensaje de nats el implementado en el fichero "handler.go"
+
+Sin entrar en tests ni pruebas, por el momento el sensor va a quedar así. Ahora volveré a la carpeta iot-manager la cual voy a reconvertir en la pieza que simula la lectura de diferentes sensores.
+
+*Subida la version v0.5 del proyecto*

@@ -1,12 +1,14 @@
 package sensor
 
-import "time"
+import (
+	"time"
+)
 
 type sensorConfig struct {
-	millisecondsInterval int
+	millisecondsInterval uint64
 }
 
-// newsensorConfig creates a new sensorConfig with default values.
+// newSensorConfig creates a new sensorConfig with default values.
 func newSensorConfig() sensorConfig {
 	return sensorConfig{
 		millisecondsInterval: 1000,
@@ -15,4 +17,8 @@ func newSensorConfig() sensorConfig {
 
 func (s *Sensor) GetInterval() time.Duration {
 	return time.Millisecond * time.Duration(s.sensorConfig.millisecondsInterval)
+}
+
+func (s *Sensor) SetInterval(newInterval uint64) {
+	s.sensorConfig.millisecondsInterval = newInterval
 }
