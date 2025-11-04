@@ -1,12 +1,19 @@
 // Package commons declares public data types shared between the sensors and the IoT manager.
 package commons
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type Measurement struct {
 	LectureID uint64 `json:"lecture_id"`
 	SensorID  uint64 `json:"sensor_id"`
 	Lecture   string `json:"lecture"`
+}
+
+func (m Measurement) String() string {
+	return fmt.Sprintf("Measurement{LectureID:%d SensorID:%d Lecture:%q}", m.LectureID, m.SensorID, m.Lecture)
 }
 
 func MeasurementToBytes(m Measurement) []byte {

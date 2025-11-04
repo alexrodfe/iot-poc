@@ -83,3 +83,13 @@ Con esto el handler queda terminado. El cliente de nats se encarga de subscribir
 Sin entrar en tests ni pruebas, por el momento el sensor va a quedar así. Ahora volveré a la carpeta iot-manager la cual voy a reconvertir en la pieza que simula la lectura de diferentes sensores.
 
 *Subida la version v0.5 del proyecto*
+
+Para el componente que simule la lectura periodica de metricas y la actualizacion de configuracion voy a hacerlo lo mas simple posible.
+Va a ser un programa en go que se ejecute a través de un main, una flag va a determinar la operacion a realizar y el script se quedará leyendo métricas e imprimiendolas por pantalla
+o bien actualizará una configuración y se apagará.
+
+Esto no es lo suyo ya que cada vez que se ejecuta el script se ha de iniciar una nueva conexión con nats y levantar todo, pero es mas rapido que programar un servidor por http rest dedicado que mantenga una instancia levantada.
+
+Ah y tambien añadir la posibilidad de editar métricas claro.
+
+*Subida la version v0.6 del proyecto*

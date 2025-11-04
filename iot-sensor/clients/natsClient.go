@@ -25,7 +25,7 @@ type natsClient struct {
 	js nats.JetStreamContext
 }
 
-func NewNatsClient(cfg config.NatsConfig) (*natsClient, error) {
+func NewNatsClient(cfg config.NatsConfig) (Nats, error) {
 	natsConn, err := nats.Connect(cfg.URL)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to NATS: %w", err)

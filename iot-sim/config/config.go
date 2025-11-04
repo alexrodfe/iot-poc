@@ -24,7 +24,7 @@ func New() (*Config, error) {
 
 	v := viper.New()
 
-	v.SetConfigFile("../.env")
+	v.SetConfigFile(".env")
 	v.SetConfigType("env")
 
 	err := v.ReadInConfig()
@@ -33,9 +33,6 @@ func New() (*Config, error) {
 	}
 
 	v.AutomaticEnv()
-
-	// Sensor config
-	_ = v.BindEnv("sensor_id", "SENSOR_ID")
 
 	// NATS config
 	_ = v.BindEnv("nats.url", "NATS_URL")
