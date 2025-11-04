@@ -1,5 +1,3 @@
-github.com/alexrodfe/iot-poc/commons v0.0.0-20251104125302-dc91233a60c4 h1:TVdqJVcCpqhbB4EREdk4IVCd0SjVCsseeqGstPa1hig=
-github.com/alexrodfe/iot-poc/commons v0.0.0-20251104125302-dc91233a60c4/go.mod h1:4Epws33ssboDH0DWryWV8f1I/EsgvSfLn76NY8givqE=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=

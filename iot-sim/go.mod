@@ -2,8 +2,10 @@ module github.com/alexrodfe/iot-poc/iot-sim
 
 go 1.24.5
 
+replace github.com/alexrodfe/iot-poc/commons => ../commons
+
 require (
-	github.com/alexrodfe/iot-poc/commons v0.0.0-20251104125302-dc91233a60c4
+	github.com/alexrodfe/iot-poc/commons v0.0.0-00010101000000-000000000000
 	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.47.0
 	github.com/spf13/viper v1.21.0
