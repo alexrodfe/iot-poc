@@ -93,3 +93,12 @@ Esto no es lo suyo ya que cada vez que se ejecuta el script se ha de iniciar una
 Ah y tambien añadir la posibilidad de editar métricas claro.
 
 *Subida la version v0.6 del proyecto*
+
+La pieza de iot-manager ya no sirve, la voy a deprecar.
+Soy consciente de que iot-sensor y iot-sim comparten la manera de generar el cliente y la config pero lo prefiero asi para que puedan crecer por separado en el futuro.
+La config sí la van a compartir por el momento, la muevo un nivel arriba.
+
+Voy a declarar cada pieza como un modulo y unirlas bajo un go.work
+Para que los cambios perduren y los modulos puedan importar correctamente el paquete commons voy a lanzar la release 1.0.0 para commons y despues una 1.1.0 para los otros modulos
+
+*Subidas las versiones v1.0.0 y v1.1.0 del proyecto*
