@@ -53,6 +53,7 @@ func createSensorStream(js nats.JetStreamContext, cfg config.NatsConfig) error {
 	// If stream already exists, do nothing
 	stream, err := js.StreamInfo(cfg.SensorStream)
 	if err == nil && stream != nil {
+		fmt.Printf("Sensor stream %s already exists\n", cfg.SensorStream)
 		return nil
 	}
 
@@ -65,6 +66,8 @@ func createSensorStream(js nats.JetStreamContext, cfg config.NatsConfig) error {
 		return fmt.Errorf("error creating sensor stream: %w", err)
 	}
 
+	fmt.Printf("Sensor stream %s succesfuly created\n", cfg.SensorStream)
+
 	return nil
 }
 
@@ -72,6 +75,7 @@ func createMeasurementsStream(js nats.JetStreamContext, cfg config.NatsConfig) e
 	// If stream already exists, do nothing
 	stream, err := js.StreamInfo(cfg.MeasurementsStream)
 	if err == nil && stream != nil {
+		fmt.Printf("Measurements stream %s already exists\n", cfg.MeasurementsStream)
 		return nil
 	}
 
@@ -84,11 +88,13 @@ func createMeasurementsStream(js nats.JetStreamContext, cfg config.NatsConfig) e
 		return fmt.Errorf("error creating measurements stream: %w", err)
 	}
 
+	fmt.Printf("Measurements stream %s succesfuly created\n", cfg.MeasurementsStream)
+
 	return nil
 }
 
 func (n *natsClient) PostMeasurement(data []byte) error {
-	_, err := n.js.Publish(n.cfg.MeasurementsStream, data)
+	_, err := n.js.Publish(n.cfg.MeasurementsSubject, data)
 	if err != nil {
 		return fmt.Errorf("error publishing measurement to NATS: %w", err)
 	}

@@ -26,6 +26,7 @@ func (s *Sensor) Run(ctx context.Context) error {
 			err := s.postMeasurement(m)
 			if err != nil {
 				log.Println("⚠️ Failed to post measurement, skipping.")
+				log.Println(err)
 				continue
 			}
 

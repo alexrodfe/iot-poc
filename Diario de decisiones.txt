@@ -101,10 +101,22 @@ La config sí la van a compartir por el momento, la muevo un nivel arriba.
 Voy a declarar cada pieza como un modulo y unirlas bajo un go.work
 Para que los cambios perduren y los modulos puedan importar correctamente el paquete commons voy a lanzar la release 1.0.0 para commons y despues una 1.1.0 para los otros modulos
 
-*Subidas las versiones v1.0.0 y v1.1.0 del proyecto*
-
 No consigo hacer que el proyecto mantenga bien las dependencias a un nivel de repositorio como seria un trabajo final en produccion.
 La respuesta correcta es que para mantener este enfoque de piezas por modulos, el modulo comun que importan "commons" deberia estar en un repositorio a parte y ser mantenido a fuera.
 Para no complicar mas la pracitca y mantenerlo todo junto, voy a añadir replaces en ambos go mod y voy a mantener un go work interno.
 
 Voy a volver a hacer los tags y este será ahora el tag v1.0.0
+
+*Subida la version v1.0.0 del proyecto*
+
+Lo suyo seria dockerizar los modulos para poder replicarlos y montar un docker compose o algo parecido que levante un entorno local de forma automatica para pruebas.
+Voy a optar por seguir manteniendolo lo mas simple y rudimentario posible por el tema de tiempo y coste.
+He añadido un script que levanta una instancia de nats con todos los valores por defecto, no tiene credenciales programadas, nada, es un nats plano.
+
+Ejecutaré a mano desde terminales distintas un trabajador "sim" y varios trabajadores "sensor" con diferentes ids para ver que la publicacion de metricas simuladas funciona.
+
+Corrigiendo algunos errores la publicacion de metricas e impresion por pantalla desde el trabajador sim funciona perfectamente.
+
+Voy a grabar esto como la version 1.1.0 y procederé a probar las otras dos funcionalidades
+
+*Subida la version v1.1.0 del proyecto*

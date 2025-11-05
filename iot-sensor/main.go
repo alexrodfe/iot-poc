@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -19,6 +20,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println(cfg)
 
 	nc, err := clients.NewNatsClient(cfg.Nats)
 	if err != nil {

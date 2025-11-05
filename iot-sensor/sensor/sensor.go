@@ -12,7 +12,7 @@ import (
 )
 
 type Sensor struct {
-	ID uint64
+	ID string
 
 	sensorConfig sensorConfig
 	natsConfig   config.NatsConfig
