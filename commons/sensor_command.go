@@ -5,14 +5,14 @@ import "encoding/json"
 type Commands uint8
 
 const (
-	CommandUpdateConfig Commands = 1
-	CommandUpdateMetric Commands = 2
+	CommandUpdateConfig      Commands = 1
+	CommandUpdateMeasurement Commands = 2
 )
 
 type SensorCommand struct {
 	CommandID Commands `json:"command_id"`
 
-	MetricID            uint64 `json:"metric_id"`
+	MeasurementID       uint64 `json:"metric_id"`
 	NewMeasurementValue string `json:"new_measurement_value"`
 
 	NewIntervalMilliseconds uint64 `json:"new_interval_milliseconds"`
@@ -25,10 +25,10 @@ func NewUpdateConfigCommand(newInterval uint64) SensorCommand {
 	}
 }
 
-func NewUpdateMetricCommand(metricID uint64, newValue string) SensorCommand {
+func NewUpdateMeasurementCommand(measurementID uint64, newValue string) SensorCommand {
 	return SensorCommand{
-		CommandID:           CommandUpdateMetric,
-		MetricID:            metricID,
+		CommandID:           CommandUpdateMeasurement,
+		MeasurementID:       measurementID,
 		NewMeasurementValue: newValue,
 	}
 }

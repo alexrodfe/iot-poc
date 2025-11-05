@@ -11,7 +11,7 @@ type sensorConfig struct {
 // newSensorConfig creates a new sensorConfig with default values.
 func newSensorConfig() sensorConfig {
 	return sensorConfig{
-		millisecondsInterval: 1000,
+		millisecondsInterval: 10000,
 	}
 }
 

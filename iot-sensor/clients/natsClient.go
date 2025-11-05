@@ -59,8 +59,9 @@ func createSensorStream(js nats.JetStreamContext, cfg config.NatsConfig) error {
 
 	// Create the sensor stream
 	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     cfg.SensorStream,
-		Subjects: []string{cfg.SensorSubject},
+		Name:      cfg.SensorStream,
+		Subjects:  []string{cfg.SensorSubject},
+		Retention: nats.InterestPolicy,
 	})
 	if err != nil {
 		return fmt.Errorf("error creating sensor stream: %w", err)
@@ -105,11 +106,18 @@ func (n *natsClient) StartHandler(handleCommand HandleCommandFunc) error {
 	_, err := n.js.Subscribe(n.cfg.SensorSubject, func(m *nats.Msg) {
 		var command commons.SensorCommand
 		if err := json.Unmarshal(m.Data, &command); err != nil {
+			fmt.Println("Warning, unable to unmarshall incoming message, ignoring..")
+			m.Ack()
 			return
 		}
+
 		if err := handleCommand(command); err != nil {
+			fmt.Printf("Error handling incoming command: %v\n", err)
+			m.Ack()
 			return
 		}
+
+		m.Ack()
 	})
 
 	if err != nil {

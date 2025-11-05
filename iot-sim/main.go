@@ -56,7 +56,7 @@ func main() {
 		newValue := editCmd.String("value", "", "new measurement value")
 		_ = editCmd.Parse(os.Args[2:])
 
-		command := commons.NewUpdateMetricCommand(*metricID, *newValue)
+		command := commons.NewUpdateMeasurementCommand(*metricID, *newValue)
 
 		natsClient.EditMeasurement(command)
 
@@ -70,6 +70,6 @@ func main() {
 func usage() {
 	fmt.Println("Usage:")
 	fmt.Println("iot-sim subscribe")
-	fmt.Println("iot-sim edit_config --interval <new_interval>")
+	fmt.Println("iot-sim edit_config --interval <new_interval_in_milliseconds>")
 	fmt.Println("iot-sim edit_measurement --id <sensor_id> --value <new_value>")
 }

@@ -21,8 +21,6 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(cfg)
-
 	nc, err := clients.NewNatsClient(cfg.Nats)
 	if err != nil {
 		panic(err)
@@ -49,4 +47,10 @@ func main() {
 	if err := sensor.Run(ctx); err != nil {
 		log.Fatalf("Fatal error: %v", err)
 	}
+
+	if err := sensor.HandleShutdown(); err != nil {
+		log.Fatalf("Fatal error handling shutdown: %v", err)
+	}
+
+	fmt.Println("Sensor shut down gracefully")
 }

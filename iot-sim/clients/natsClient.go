@@ -70,7 +70,7 @@ func (n *natsClient) EditConfig(command commons.SensorCommand) error {
 func (n *natsClient) EditMeasurement(command commons.SensorCommand) error {
 	data := commons.SensorCommandToBytes(command)
 
-	_, err := n.js.Publish(n.cfg.MeasurementsSubject, data)
+	_, err := n.js.Publish(n.cfg.SensorSubject, data)
 	if err != nil {
 		return fmt.Errorf("error publishing command: %w", err)
 	}

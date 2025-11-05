@@ -120,3 +120,13 @@ Corrigiendo algunos errores la publicacion de metricas e impresion por pantalla 
 Voy a grabar esto como la version 1.1.0 y procederé a probar las otras dos funcionalidades
 
 *Subida la version v1.1.0 del proyecto*
+
+El set interval tambien funciona tras arreglar un error en el ack de los mensajes. Ahora para probar el change metrics voy a pedirle al sensor que cuando se desactive, volque toda su memoria interna en un fichero de texto.
+Esto me permitirá a posteriori ver si la métrica ha sido editada satisfactoriamente desde la pieza del simulador.
+
+Tenia algunos bugs en el codigo que estas pruebas me han permitido descubrir y arreglar. Con esto puedo conlcuir en que las 3 operaciones funcionan exitosamente.
+A partir de aqui es mejorarlo todo lo que uno quiera. Configurar las politicas de los streams, hacer una db, configuracion para el nats... etc etc
+
+Pero con esto las funcionalidades basicas quedan reflejadas y operativas
+
+*Subida la version v1.2.0 del proyecto*
