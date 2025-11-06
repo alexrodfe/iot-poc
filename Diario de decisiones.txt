@@ -146,4 +146,4 @@ La piedra angular va a ser el nombre del sensor y desde ese nombre se va a gesti
 Muy bien, a partir de ahora se ha de indicar el ID del sensor por la linea de comandos tanto para levantarlo como para hacer operaciones.
 De esta manera cada sensor atiende sus streams generados. He aprovehcado para refactorizar la configuracion, eliminar las ENV y arreglar una falla en la configuracion redundante que tenia en los parametros del nats.
 
-*Subida la version v1.3.0 del proyecto*
+*Subida la version v1.4.0 del proyecto*
