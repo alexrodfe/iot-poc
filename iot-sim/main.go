@@ -60,6 +60,18 @@ func main() {
 
 		natsClient.EditMeasurement(command)
 
+	case "get_config":
+		cfgStr, err := natsClient.RetrieveSensorConfig()
+		if err != nil {
+			fmt.Println("Error retrieving sensor config:", err)
+			return
+		}
+		if cfgStr == "" {
+			fmt.Println("No sensor config found.")
+			return
+		}
+		fmt.Println("Sensor config:", cfgStr)
+
 	default:
 		fmt.Printf("Unknown command: %s\n", cmd)
 		usage()
@@ -71,5 +83,6 @@ func usage() {
 	fmt.Println("Usage:")
 	fmt.Println("iot-sim subscribe")
 	fmt.Println("iot-sim edit_config --interval <new_interval_in_milliseconds>")
-	fmt.Println("iot-sim edit_measurement --id <sensor_id> --value <new_value>")
+	fmt.Println("iot-sim edit_measurement --id <measurement_id> --value <new_value>")
+	fmt.Println("iot-sim get_config")
 }

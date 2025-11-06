@@ -2,6 +2,7 @@
 package clients
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/alexrodfe/iot-poc/commons"
@@ -15,6 +16,7 @@ type Nats interface {
 	SubscribeToMeasurements() error
 	EditConfig(commons.SensorCommand) error
 	EditMeasurement(commons.SensorCommand) error
+	RetrieveSensorConfig() (string, error)
 }
 
 var _ Nats = (*natsClient)(nil)
@@ -76,4 +78,21 @@ func (n *natsClient) EditMeasurement(command commons.SensorCommand) error {
 	}
 
 	return nil
+}
+
+func (n *natsClient) RetrieveSensorConfig() (string, error) {
+	kv, err := n.js.KeyValue(n.cfg.SensorStream)
+	if err != nil {
+		return "", fmt.Errorf("kv bucket %q not available: %w", n.cfg.SensorStream, err)
+	}
+
+	entry, err := kv.Get("config")
+	if err != nil {
+		if errors.Is(err, nats.ErrKeyNotFound) {
+			return "", nil
+		}
+		return "", fmt.Errorf("error retrieving config: %w", err)
+	}
+
+	return string(entry.Value()), nil
 }

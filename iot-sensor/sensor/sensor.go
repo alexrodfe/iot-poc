@@ -26,11 +26,14 @@ type Sensor struct {
 
 func New(cfg *config.Config, natsClient clients.Nats) *Sensor {
 	generatedMetrics := make(map[uint64]commons.Measurement)
+	sensorConfig := newSensorConfig()
+
+	natsClient.UpdateSensorConfig(sensorConfig.ToString())
 
 	return &Sensor{
 		ID:                    cfg.SensorID,
 		natsConfig:            cfg.Nats,
-		sensorConfig:          newSensorConfig(),
+		sensorConfig:          sensorConfig,
 		natsClient:            natsClient,
 		generatedMeasurements: generatedMetrics,
 	}

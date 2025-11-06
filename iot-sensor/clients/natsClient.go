@@ -15,6 +15,7 @@ type HandleCommandFunc func(command commons.SensorCommand) error
 type Nats interface {
 	PostMeasurement(data []byte) error
 	StartHandler(handleCommand HandleCommandFunc) error
+	UpdateSensorConfig(string) error
 }
 
 var _ Nats = (*natsClient)(nil)
@@ -23,6 +24,7 @@ type natsClient struct {
 	cfg config.NatsConfig
 
 	js nats.JetStreamContext
+	kv nats.KeyValue
 }
 
 func NewNatsClient(cfg config.NatsConfig) (Nats, error) {
@@ -122,6 +124,30 @@ func (n *natsClient) StartHandler(handleCommand HandleCommandFunc) error {
 
 	if err != nil {
 		return fmt.Errorf("error subscribing to sensor stream: %w", err)
+	}
+
+	return nil
+}
+
+func (n *natsClient) UpdateSensorConfig(data string) error {
+	if n.kv == nil {
+		kv, err := n.js.KeyValue(n.cfg.SensorStream)
+		if err != nil {
+			kv, err = n.js.CreateKeyValue(&nats.KeyValueConfig{
+				Bucket:      n.cfg.SensorStream,
+				Description: "Ephemeral sensor config",
+				Storage:     nats.MemoryStorage,
+				History:     1,
+			})
+			if err != nil {
+				return fmt.Errorf("error creating KV bucket for sensor config: %w", err)
+			}
+		}
+		n.kv = kv
+	}
+
+	if _, err := n.kv.Put("config", []byte(data)); err != nil {
+		return fmt.Errorf("error storing sensor config in KV: %w", err)
 	}
 
 	return nil

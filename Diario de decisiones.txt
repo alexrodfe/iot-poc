@@ -130,3 +130,9 @@ A partir de aqui es mejorarlo todo lo que uno quiera. Configurar las politicas d
 Pero con esto las funcionalidades basicas quedan reflejadas y operativas
 
 *Subida la version v1.2.0 del proyecto*
+
+Acabo de caer en la cuenta de actualmente no se pueden consultar las configuraciones internas de cada sensor. Como en el ejercicio se pide que se haga através de la api de nats y para que sea continuado con mi solución.
+Lo que pienso hacer es pedirle a cada sensor que registre su configuracion en ephemeral store de nats como clave valor. Esta podra ser consultada de vuelta por el sim.
+Con estos cambios ya se puede consultar la configuracion a traves de la ephemeral store de cada sensor.
+
+*Subida la version v1.3.0 del proyecto*

@@ -29,7 +29,8 @@ func (s *Sensor) handleCommand(command commons.SensorCommand) error {
 
 func (s *Sensor) handleUpdateConfig(command commons.SensorCommand) {
 	fmt.Printf("-----Change of interval detected, new interval set to %d milliseconds-----\n", command.NewIntervalMilliseconds)
-	s.SetInterval(command.NewIntervalMilliseconds)
+	newSensorConfig := s.SetInterval(command.NewIntervalMilliseconds)
+	s.natsClient.UpdateSensorConfig(newSensorConfig.ToString())
 }
 
 func (s *Sensor) handleUpdateMetric(command commons.SensorCommand) {
