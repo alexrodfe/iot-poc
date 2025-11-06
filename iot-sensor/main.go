@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -15,8 +16,17 @@ import (
 )
 
 func main() {
+	sensorID := flag.String("sensorID", "", "sensor identifier (required)")
+	flag.Parse()
+
+	if *sensorID == "" {
+		fmt.Println("Error: --sensorID is required")
+		usage()
+		os.Exit(2)
+	}
+
 	// Build dependencies
-	cfg, err := config.New()
+	cfg, err := config.New(*sensorID)
 	if err != nil {
 		panic(err)
 	}
@@ -53,4 +63,9 @@ func main() {
 	}
 
 	fmt.Println("Sensor shut down gracefully")
+}
+
+func usage() {
+	fmt.Println("Usage:")
+	fmt.Println("iot-sensor --sensorID <id>")
 }

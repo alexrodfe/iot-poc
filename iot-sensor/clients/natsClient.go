@@ -62,7 +62,7 @@ func createSensorStream(js nats.JetStreamContext, cfg config.NatsConfig) error {
 	// Create the sensor stream
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:      cfg.SensorStream,
-		Subjects:  []string{cfg.SensorSubject},
+		Subjects:  []string{cfg.SensorStream},
 		Retention: nats.InterestPolicy,
 	})
 	if err != nil {
@@ -85,7 +85,7 @@ func createMeasurementsStream(js nats.JetStreamContext, cfg config.NatsConfig) e
 	// Create the measurements stream
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:     cfg.MeasurementsStream,
-		Subjects: []string{cfg.MeasurementsSubject},
+		Subjects: []string{cfg.MeasurementsStream},
 	})
 	if err != nil {
 		return fmt.Errorf("error creating measurements stream: %w", err)
@@ -97,7 +97,7 @@ func createMeasurementsStream(js nats.JetStreamContext, cfg config.NatsConfig) e
 }
 
 func (n *natsClient) PostMeasurement(data []byte) error {
-	_, err := n.js.Publish(n.cfg.MeasurementsSubject, data)
+	_, err := n.js.Publish(n.cfg.MeasurementsStream, data)
 	if err != nil {
 		return fmt.Errorf("error publishing measurement to NATS: %w", err)
 	}
@@ -105,7 +105,7 @@ func (n *natsClient) PostMeasurement(data []byte) error {
 }
 
 func (n *natsClient) StartHandler(handleCommand HandleCommandFunc) error {
-	_, err := n.js.Subscribe(n.cfg.SensorSubject, func(m *nats.Msg) {
+	_, err := n.js.Subscribe(n.cfg.SensorStream, func(m *nats.Msg) {
 		var command commons.SensorCommand
 		if err := json.Unmarshal(m.Data, &command); err != nil {
 			fmt.Println("Warning, unable to unmarshall incoming message, ignoring..")

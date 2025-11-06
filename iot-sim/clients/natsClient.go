@@ -13,10 +13,10 @@ import (
 type HandleCommandFunc func(command commons.SensorCommand) error
 
 type Nats interface {
-	SubscribeToMeasurements() error
-	EditConfig(commons.SensorCommand) error
-	EditMeasurement(commons.SensorCommand) error
-	RetrieveSensorConfig() (string, error)
+	SubscribeToMeasurements(sensorID string) error
+	EditConfig(sensorID string, command commons.SensorCommand) error
+	EditMeasurement(sensorID string, command commons.SensorCommand) error
+	RetrieveSensorConfig(sensorID string) (string, error)
 }
 
 var _ Nats = (*natsClient)(nil)
@@ -41,8 +41,8 @@ func NewNatsClient(cfg config.NatsConfig) (Nats, error) {
 	return &natsClient{cfg: cfg, js: js}, nil
 }
 
-func (n *natsClient) SubscribeToMeasurements() error {
-	_, err := n.js.Subscribe(n.cfg.MeasurementsSubject, func(msg *nats.Msg) {
+func (n *natsClient) SubscribeToMeasurements(sensorID string) error {
+	_, err := n.js.Subscribe(commons.GetMeasurementsStream(sensorID), func(msg *nats.Msg) {
 		measurement, err := commons.BytesToMeasurement(msg.Data)
 		if err != nil {
 			fmt.Printf("error unmarshaling measurement: %v\n", err)
@@ -58,10 +58,10 @@ func (n *natsClient) SubscribeToMeasurements() error {
 	return nil
 }
 
-func (n *natsClient) EditConfig(command commons.SensorCommand) error {
+func (n *natsClient) EditConfig(sensorID string, command commons.SensorCommand) error {
 	data := commons.SensorCommandToBytes(command)
 
-	_, err := n.js.Publish(n.cfg.SensorSubject, data)
+	_, err := n.js.Publish(commons.GetSensorStream(sensorID), data)
 	if err != nil {
 		return fmt.Errorf("error publishing command: %w", err)
 	}
@@ -69,10 +69,10 @@ func (n *natsClient) EditConfig(command commons.SensorCommand) error {
 	return nil
 }
 
-func (n *natsClient) EditMeasurement(command commons.SensorCommand) error {
+func (n *natsClient) EditMeasurement(sensorID string, command commons.SensorCommand) error {
 	data := commons.SensorCommandToBytes(command)
 
-	_, err := n.js.Publish(n.cfg.SensorSubject, data)
+	_, err := n.js.Publish(commons.GetSensorStream(sensorID), data)
 	if err != nil {
 		return fmt.Errorf("error publishing command: %w", err)
 	}
@@ -80,10 +80,10 @@ func (n *natsClient) EditMeasurement(command commons.SensorCommand) error {
 	return nil
 }
 
-func (n *natsClient) RetrieveSensorConfig() (string, error) {
-	kv, err := n.js.KeyValue(n.cfg.SensorStream)
+func (n *natsClient) RetrieveSensorConfig(sensorID string) (string, error) {
+	kv, err := n.js.KeyValue(commons.GetSensorStream(sensorID))
 	if err != nil {
-		return "", fmt.Errorf("kv bucket %q not available: %w", n.cfg.SensorStream, err)
+		return "", fmt.Errorf("kv bucket %q not available: %w", commons.GetSensorStream(sensorID), err)
 	}
 
 	entry, err := kv.Get("config")

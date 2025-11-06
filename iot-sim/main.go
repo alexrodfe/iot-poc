@@ -23,7 +23,6 @@ func main() {
 		panic(err)
 	}
 
-	// Initialize NATS client
 	natsClient, err := clients.NewNatsClient(cfg.Nats)
 	if err != nil {
 		panic(err)
@@ -32,10 +31,16 @@ func main() {
 	cmd := os.Args[1]
 
 	switch cmd {
-	case "subscribe":
-		natsClient.SubscribeToMeasurements()
 
-		// Wait for termination signal
+	case "subscribe":
+		subCmd := flag.NewFlagSet("subscribe", flag.ExitOnError)
+		sensorID := subCmd.String("sensorID", "", "sensor identifier (required)")
+		_ = subCmd.Parse(os.Args[2:])
+		requireSensorID(subCmd, *sensorID)
+
+		fmt.Printf("Subscribing for sensorID=%s\n", *sensorID)
+		natsClient.SubscribeToMeasurements(*sensorID)
+
 		sigCh := make(chan os.Signal, 1)
 		signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
 		<-sigCh
@@ -43,34 +48,43 @@ func main() {
 
 	case "edit_config":
 		editCmd := flag.NewFlagSet("edit_config", flag.ExitOnError)
+		sensorID := editCmd.String("sensorID", "", "sensor identifier (required)")
 		interval := editCmd.Int("interval", 0, "new interval (seconds)")
 		_ = editCmd.Parse(os.Args[2:])
+		requireSensorID(editCmd, *sensorID)
 
 		command := commons.NewUpdateConfigCommand(uint64(*interval))
-
-		natsClient.EditConfig(command)
+		fmt.Printf("Editing config sensorID=%s interval=%d\n", *sensorID, *interval)
+		natsClient.EditConfig(*sensorID, command)
 
 	case "edit_measurement":
 		editCmd := flag.NewFlagSet("edit_measurement", flag.ExitOnError)
+		sensorID := editCmd.String("sensorID", "", "sensor identifier (required)")
 		metricID := editCmd.Uint64("id", 0, "metric ID")
 		newValue := editCmd.String("value", "", "new measurement value")
 		_ = editCmd.Parse(os.Args[2:])
+		requireSensorID(editCmd, *sensorID)
 
 		command := commons.NewUpdateMeasurementCommand(*metricID, *newValue)
-
-		natsClient.EditMeasurement(command)
+		fmt.Printf("Editing measurement sensorID=%s metricID=%d value=%s\n", *sensorID, *metricID, *newValue)
+		natsClient.EditMeasurement(*sensorID, command)
 
 	case "get_config":
-		cfgStr, err := natsClient.RetrieveSensorConfig()
+		getCmd := flag.NewFlagSet("get_config", flag.ExitOnError)
+		sensorID := getCmd.String("sensorID", "", "sensor identifier (required)")
+		_ = getCmd.Parse(os.Args[2:])
+		requireSensorID(getCmd, *sensorID)
+
+		cfgStr, err := natsClient.RetrieveSensorConfig(*sensorID)
 		if err != nil {
 			fmt.Println("Error retrieving sensor config:", err)
 			return
 		}
 		if cfgStr == "" {
-			fmt.Println("No sensor config found.")
+			fmt.Printf("No sensor config found for sensorID=%s\n", *sensorID)
 			return
 		}
-		fmt.Println("Sensor config:", cfgStr)
+		fmt.Printf("Sensor config for %s: %s\n", *sensorID, cfgStr)
 
 	default:
 		fmt.Printf("Unknown command: %s\n", cmd)
@@ -79,10 +93,18 @@ func main() {
 	}
 }
 
+func requireSensorID(fs *flag.FlagSet, sensorID string) {
+	if sensorID == "" {
+		fmt.Println("Error: --sensorID is required")
+		fs.Usage()
+		os.Exit(2)
+	}
+}
+
 func usage() {
 	fmt.Println("Usage:")
-	fmt.Println("iot-sim subscribe")
-	fmt.Println("iot-sim edit_config --interval <new_interval_in_milliseconds>")
-	fmt.Println("iot-sim edit_measurement --id <measurement_id> --value <new_value>")
-	fmt.Println("iot-sim get_config")
+	fmt.Println("  iot-sim subscribe --sensorID <id>")
+	fmt.Println("  iot-sim get_config --sensorID <id>")
+	fmt.Println("  iot-sim edit_config --sensorID <id> --interval <seconds>")
+	fmt.Println("  iot-sim edit_measurement --sensorID <id> --id <measurement_id> --value <new_value>")
 }
