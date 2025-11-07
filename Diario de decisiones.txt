@@ -147,3 +147,6 @@ Muy bien, a partir de ahora se ha de indicar el ID del sensor por la linea de co
 De esta manera cada sensor atiende sus streams generados. He aprovehcado para refactorizar la configuracion, eliminar las ENV y arreglar una falla en la configuracion redundante que tenia en los parametros del nats.
 
 *Subida la version v1.4.0 del proyecto*
+
+Para la bateria de tests encuentro los test unitarios aburridos, sí es cierto que he preparado el cliente de nats dentro del sensor para que pueda y deba ser utilizado como interfaz. Esto me permite crear otra implementacion mock que me sirve para tests unitarios.
+El tiempo se me echa bastante encima y ya he demorado bastante, por lo que voy a hacer tests de integracion para el cliente de nats que me parecen mas significativos. Los haré bajo una test suite para demostrar que esto se puede replicar para el resto del proyecto.

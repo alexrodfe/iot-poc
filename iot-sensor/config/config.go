@@ -36,11 +36,7 @@ func New(sensorID string) (*Config, error) {
 	// NATS config
 	_ = v.BindEnv("nats_url", "NATS_URL")
 
-	natsConfig := NatsConfig{
-		URL:                v.GetString("nats_url"),
-		SensorStream:       commons.GetSensorStream(sensorID),
-		MeasurementsStream: commons.GetMeasurementsStream(sensorID),
-	}
+	natsConfig := NewNatsConfig(sensorID, v.GetString("nats_url"))
 
 	config := Config{
 		SensorID: sensorID,
@@ -48,4 +44,12 @@ func New(sensorID string) (*Config, error) {
 	}
 
 	return &config, nil
+}
+
+func NewNatsConfig(sensorID, url string) NatsConfig {
+	return NatsConfig{
+		URL:                url,
+		SensorStream:       commons.GetSensorStream(sensorID),
+		MeasurementsStream: commons.GetMeasurementsStream(sensorID),
+	}
 }
