@@ -150,3 +150,7 @@ De esta manera cada sensor atiende sus streams generados. He aprovehcado para re
 
 Para la bateria de tests encuentro los test unitarios aburridos, sí es cierto que he preparado el cliente de nats dentro del sensor para que pueda y deba ser utilizado como interfaz. Esto me permite crear otra implementacion mock que me sirve para tests unitarios.
 El tiempo se me echa bastante encima y ya he demorado bastante, por lo que voy a hacer tests de integracion para el cliente de nats que me parecen mas significativos. Los haré bajo una test suite para demostrar que esto se puede replicar para el resto del proyecto.
+
+Por ultimo voy a subir un diagrama que explica de forma escueta la solución propuesta. Tambien he redactado mejor el README para que refleje mejor cómo usar el proyecto y probarlo.
+
+Con esto, a falta de muchas mas mejoras, doy por terminado el POC. Considero que todas las funcionalidades basicas funcionan y se pueden probar, queda reflejado un esqueleto basico y firme de la solucion y el proyecto se puede seguir construyendo a partir de aqui.
